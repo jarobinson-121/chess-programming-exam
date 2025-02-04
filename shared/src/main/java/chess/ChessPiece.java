@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -10,7 +11,34 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private final ChessGame.TeamColor pieceColor;
+    private final ChessPiece.PieceType type;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
     }
 
     /**
@@ -29,14 +57,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,6 +75,26 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (type) {
+            case KING:
+                KingMovesCalculator kingMoves = new KingMovesCalculator();
+                return kingMoves.pieceMoves(board, myPosition);
+            case QUEEN:
+                QueenMovesCalculator queenMoves = new QueenMovesCalculator();
+                return queenMoves.pieceMoves(board, myPosition);
+            case BISHOP:
+                BishopMovesCalculator bishopMoves = new BishopMovesCalculator();
+                return bishopMoves.pieceMoves(board, myPosition);
+            case KNIGHT:
+                KnightMovesCalculator knightMoves = new KnightMovesCalculator();
+                return knightMoves.pieceMoves(board, myPosition);
+            case ROOK:
+                RookMovesCalculator rookMoves = new RookMovesCalculator();
+                return rookMoves.pieceMoves(board, myPosition);
+            case PAWN:
+                PawnMovesCalculator pawnMoves = new PawnMovesCalculator();
+                return pawnMoves.pieceMoves(board, myPosition);
+            default: return null;
+        }
     }
 }
